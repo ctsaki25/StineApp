@@ -2,36 +2,40 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    >
 
     <TextView
-        android:id="@+id/textViewHeader"
+        android:id="@+id/textViewTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="26pt"
         android:background="#00BCD4"
-        android:padding="8dp"
-        android:text="STINE"
+        android:padding="13dp"
+        android:text="Add Event"
         android:textAlignment="center"
         android:textColor="#ffffff"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:layout_centerHorizontal="true"
+        />
 
-    <ListView
-        android:id="@+id/listViewEvents"
-        android:layout_width="wrap_content"
-        android:layout_height="584dp"
-        android:layout_above="@+id/buttonAddEvent"
-        android:layout_below="@id/textViewHeader"
-        android:layout_marginTop="1dp"
-        android:layout_marginBottom="18dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewEvents"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@+id/textViewTitle"
+        android:layout_above="@+id/addEventButton"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp" />
 
 
     <Button
-        android:id="@+id/buttonAddEvent"
+        android:id="@+id/addEventButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10pt"
+        android:text="New Event"
         android:layout_alignParentBottom="true"
-        android:text="Add Event" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:onClick="onAddEventButtonClick" />
 
 </RelativeLayout>
