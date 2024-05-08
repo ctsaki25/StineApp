@@ -1,4 +1,4 @@
-package com.example.bobbysandroidstartersolution
+package com.example.stineapp
 
 import org.junit.Test
 

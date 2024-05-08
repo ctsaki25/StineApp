@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BobbysAndroidStarterSolution"
+rootProject.name = "StineApp"
 include(":app")
  

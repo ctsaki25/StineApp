@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.bobbysandroidstartersolution"
+    namespace = "com.example.stineapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.bobbysandroidstartersolution"
+        applicationId = "com.example.stineapp"
         minSdk = 28
         targetSdk = 34
         versionCode = 1
