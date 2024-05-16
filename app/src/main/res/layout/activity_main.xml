@@ -7,15 +7,16 @@
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="match_parent"
-        android:layout_height="26pt"
-        android:background="#00BCD4"
-        android:padding="13dp"
+        android:layout_height="wrap_content"
+        android:background="#6200EE"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
         android:text="S.T.I.N.E"
         android:textAlignment="center"
-        android:textColor="#ffffff"
-        android:textSize="24sp"
-        android:layout_centerHorizontal="true"
-        />
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:fontFamily="sans-serif-medium"
+        android:elevation="4dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewEvents"
@@ -32,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10pt"
+        android:backgroundTint="#6200EE"
         android:text="New Event"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"

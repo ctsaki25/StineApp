@@ -3,23 +3,22 @@ package com.example.stineapp
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.stineapp.R
-import com.example.stineapp.R.id.textViewEventCountdown
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-
+import java.util.Collections
 
 data class Event(val name: String, val date: String) {
     fun getTimeRemainingOrPassed(): String {
@@ -92,6 +91,7 @@ class MainActivity : AppCompatActivity(), EventsAdapter.EventListener {
         recyclerView = findViewById(R.id.recyclerViewEvents)
         recyclerView.layoutManager = LinearLayoutManager(this)
         loadEvents()
+        setupItemTouchHelper()
     }
 
     override fun onResume() {
@@ -147,4 +147,30 @@ class MainActivity : AppCompatActivity(), EventsAdapter.EventListener {
         startActivity(intent)
     }
 
+    private fun setupItemTouchHelper() {
+        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                val fromPosition = viewHolder.adapterPosition
+                val toPosition = target.adapterPosition
+                Collections.swap(eventsList, fromPosition, toPosition)
+                recyclerView.adapter?.notifyItemMoved(fromPosition, toPosition)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // Swiping disabled, but method must be implemented
+            }
+
+            override fun isLongPressDragEnabled(): Boolean {
+                return true // Enable drag on long press
+            }
+
+            override fun isItemViewSwipeEnabled(): Boolean {
+                return false // Disable swipe to delete
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
 }
