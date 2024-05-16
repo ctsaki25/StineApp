@@ -18,47 +18,9 @@ import java.util.HashMap;
 
 class AddEventActivity : AppCompatActivity() {
 
-    private lateinit var editTextDate: EditText
     private lateinit var editTextEventName: EditText
-    private lateinit var buttonSave: Button
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.add_event_page)
-
-        editTextEventName = findViewById(R.id.editTextEventName)
-        editTextDate = findViewById(R.id.editTextDate)
-        buttonSave = findViewById(R.id.buttonSave)
-
-        buttonSave.setOnClickListener {
-            val name = editTextEventName.text.toString().trim()
-            val date = editTextDate.text.toString().trim()
-
-            if (name.isEmpty() || date.isEmpty()) {
-                Toast.makeText(this, "Both event name and date are required", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            saveEvent(MainActivity.Event(name, date))
-            Toast.makeText(this, "Event saved", Toast.LENGTH_SHORT).show()
-            finish()
-        }
-    }
-
-    private fun saveEvent(event: MainActivity.Event) {
-        val sharedPreferences = getSharedPreferences("events", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val gson = Gson()
-
-        val existingEventsJson = sharedPreferences.getString("events_list", "[]")
-        val eventType = object : TypeToken<ArrayList<MainActivity.Event>>() {}.type
-        var events: ArrayList<MainActivity.Event> = gson.fromJson(existingEventsJson, eventType)
-
-        events.add(event)
-        val newEventsJson = gson.toJson(events)
-        editor.putString("events_list", newEventsJson)
-        editor.apply()
-    }
+    private lateinit var editTextDate: EditText
+    private var eventPosition: Int? = null
 
     fun showDatePickerDialog(view: View) {
         val calendar = Calendar.getInstance()
@@ -66,22 +28,62 @@ class AddEventActivity : AppCompatActivity() {
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(
-            this,
-            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                val selectedDate = "${dayOfMonth}/${monthOfYear + 1}/${year}"
-                editTextDate.setText(selectedDate)
-            },
-            year,
-            month,
-            day
-        )
+        val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDayOfMonth ->
+            val selectedDate = String.format("%d/%d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear)
+            editTextDate.setText(selectedDate)
+        }, year, month, day)
+
         datePickerDialog.show()
     }
 
-    fun hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.add_event_page)
+
+        editTextEventName = findViewById(R.id.editTextEventName)
+        editTextDate = findViewById(R.id.editTextDate)
+
+        intent?.let {
+            if (it.getBooleanExtra("edit_event", false)) {
+                editTextEventName.setText(it.getStringExtra("event_name"))
+                editTextDate.setText(it.getStringExtra("event_date"))
+                eventPosition = it.getIntExtra("event_position", -1)
+            }
+        }
+
+        findViewById<Button>(R.id.buttonSave).setOnClickListener {
+            saveEvent()
+        }
     }
 
+    private fun saveEvent() {
+        val name = editTextEventName.text.toString().trim()
+        val date = editTextDate.text.toString().trim()
+
+        if (name.isEmpty() || date.isEmpty()) {
+            Toast.makeText(this, "Both event name and date are required", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val event = Event(name, date)
+        val sharedPreferences = getSharedPreferences("events", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val eventsJson = sharedPreferences.getString("events_list", "[]")
+        val eventType = object : TypeToken<ArrayList<Event>>() {}.type
+        val eventsList: ArrayList<Event> = gson.fromJson(eventsJson, eventType)
+
+        eventPosition?.let {
+            if (it >= 0) {
+                eventsList[it] = event // Replace the existing event
+            } else {
+                eventsList.add(event) // New event
+            }
+        } ?: eventsList.add(event)
+
+        val newEventsJson = gson.toJson(eventsList)
+        sharedPreferences.edit().putString("events_list", newEventsJson).apply()
+
+        finish()
+    }
 }
