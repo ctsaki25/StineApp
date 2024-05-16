@@ -10,7 +10,7 @@
         android:layout_height="26pt"
         android:background="#00BCD4"
         android:padding="13dp"
-        android:text="Add Event"
+        android:text="STINE"
         android:textAlignment="center"
         android:textColor="#ffffff"
         android:textSize="24sp"
