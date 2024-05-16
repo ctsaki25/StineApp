@@ -2,6 +2,7 @@ package com.example.stineapp
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,11 +14,30 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.stineapp.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 
 class MainActivity : AppCompatActivity() {
 
-    data class Event(val name: String, val date: String)
+    data class Event(val name: String, val date: String) {
+        fun getTimeRemainingOrPassed(): String {
+            try {
+                val now = LocalDate.now()
+                val eventDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("d/M/yyyy"))
+
+                val daysBetween = ChronoUnit.DAYS.between(now, eventDate)
+                return when {
+                    daysBetween > 0 -> "$daysBetween days remaining"
+                    daysBetween < 0 -> "${-daysBetween} days passed"
+                    else -> "Today"
+                }
+            } catch (e: Exception) {
+                return "Invalid date format"
+            }
+        }
+    }
     private lateinit var recyclerView: RecyclerView
     private lateinit var eventsAdapter: EventsAdapter
 
@@ -67,7 +87,7 @@ class EventsAdapter(private val eventsList: ArrayList<MainActivity.Event>) : Rec
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val eventNameTextView: TextView = view.findViewById(R.id.textViewEventName)
-        val eventDateTextView: TextView = view.findViewById(R.id.textViewEventCountdown)
+        val eventTimeTextView: TextView = view.findViewById(R.id.textViewEventCountdown)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -76,9 +96,16 @@ class EventsAdapter(private val eventsList: ArrayList<MainActivity.Event>) : Rec
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.eventNameTextView.text = eventsList[position].name
-        holder.eventDateTextView.text = eventsList[position].date
+        val event = eventsList[position]
+        holder.eventNameTextView.text = event.name
+        holder.eventTimeTextView.text = event.getTimeRemainingOrPassed()
+        if (event.getTimeRemainingOrPassed().contains("passed")) {
+            holder.eventTimeTextView.setTextColor(Color.RED)
+        } else {
+            holder.eventTimeTextView.setTextColor(Color.BLACK) // or any other color
+        }
     }
 
     override fun getItemCount() = eventsList.size
 }
+
