@@ -27,7 +27,7 @@ data class Event(val name: String, val date: String) {
         val eventDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("d/M/yyyy"))
         val daysBetween = ChronoUnit.DAYS.between(now, eventDate)
         return when {
-            daysBetween > 0 -> "$daysBetween days remaining"
+            daysBetween > 0 -> "$daysBetween days left"
             daysBetween < 0 -> "${-daysBetween} days passed"
             else -> "Today"
         }
