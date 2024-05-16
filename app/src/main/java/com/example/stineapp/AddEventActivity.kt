@@ -46,10 +46,12 @@ class AddEventActivity : AppCompatActivity() {
 
         intent?.let {
             if (it.getBooleanExtra("edit_event", false)) {
-                editTextEventName.setText(it.getStringExtra("event_name"))
-                editTextDate.setText(it.getStringExtra("event_date"))
-                eventPosition = it.getIntExtra("event_position", -1)
+                return
             }
+            editTextEventName.setText(it.getStringExtra("event_name"))
+            editTextDate.setText(it.getStringExtra("event_date"))
+            eventPosition = it.getIntExtra("event_position", -1)
+
         }
 
         findViewById<Button>(R.id.buttonSave).setOnClickListener {
